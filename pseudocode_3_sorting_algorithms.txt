@@ -1,0 +1,112 @@
+FUNCTION quick_sort(array, low_index, high_index)
+    // Implements QuickSort algorithm to sort an array in ascending order
+    
+    // Base case: if partition has 1 or fewer elements
+    IF low_index >= high_index THEN
+        RETURN array
+    END IF
+    
+    // Choose pivot and partition
+    pivot_index = partition(array, low_index, high_index)
+    
+    // Recursively sort left partition
+    quick_sort(array, low_index, pivot_index - 1)
+    
+    // Recursively sort right partition
+    quick_sort(array, pivot_index + 1, high_index)
+    
+    RETURN array
+END FUNCTION
+
+
+FUNCTION partition(array, low_index, high_index)
+    // Partitions array around a pivot element
+    
+    // Choose last element as pivot
+    pivot = array[high_index]
+    
+    // Index of smaller element
+    i = low_index - 1
+    
+    // Traverse through array
+    FOR j = low_index TO high_index - 1 DO
+        // If current element is smaller than or equal to pivot
+        IF array[j] <= pivot THEN
+            // Increment index of smaller element
+            i = i + 1
+            
+            // Swap elements
+            temp = array[i]
+            array[i] = array[j]
+            array[j] = temp
+        END IF
+    END FOR
+    
+    // Place pivot in correct position
+    temp = array[i + 1]
+    array[i + 1] = array[high_index]
+    array[high_index] = temp
+    
+    // Return pivot position
+    RETURN i + 1
+END FUNCTION
+
+
+FUNCTION merge_sort(array)
+    // Implements MergeSort algorithm using divide and conquer
+    
+    // Base case: array with 0 or 1 element is already sorted
+    IF LENGTH(array) <= 1 THEN
+        RETURN array
+    END IF
+    
+    // Find middle point
+    mid = LENGTH(array) / 2
+    
+    // Divide array into two halves
+    left_half = array[0 to mid-1]
+    right_half = array[mid to end]
+    
+    // Recursively sort both halves
+    sorted_left = merge_sort(left_half)
+    sorted_right = merge_sort(right_half)
+    
+    // Merge sorted halves
+    sorted_array = merge(sorted_left, sorted_right)
+    
+    RETURN sorted_array
+END FUNCTION
+
+
+FUNCTION merge(left_array, right_array)
+    // Merges two sorted arrays into one sorted array
+    
+    result = EMPTY_ARRAY
+    left_index = 0
+    right_index = 0
+    
+    // Compare elements from both arrays
+    WHILE left_index < LENGTH(left_array) AND right_index < LENGTH(right_array) DO
+        IF left_array[left_index] <= right_array[right_index] THEN
+            APPEND(result, left_array[left_index])
+            left_index = left_index + 1
+        ELSE
+            APPEND(result, right_array[right_index])
+            right_index = right_index + 1
+        END IF
+    END WHILE
+    
+    // Append remaining elements from left array
+    WHILE left_index < LENGTH(left_array) DO
+        APPEND(result, left_array[left_index])
+        left_index = left_index + 1
+    END WHILE
+    
+    // Append remaining elements from right array
+    WHILE right_index < LENGTH(right_array) DO
+        APPEND(result, right_array[right_index])
+        right_index = right_index + 1
+    END WHILE
+    
+    RETURN result
+END FUNCTION
