@@ -1,0 +1,58 @@
+FUNCTION authenticate_user(username, password)
+    // Validates user credentials against database
+    
+    // Input validation
+    IF username IS EMPTY OR password IS EMPTY THEN
+        RETURN error("Username and password are required")
+    END IF
+    
+    // Normalize username
+    username = TRIM(LOWERCASE(username))
+    
+    // Query database
+    user_record = DATABASE.query("SELECT * FROM users WHERE username = ?", username)
+    
+    // Check if user exists
+    IF user_record IS NULL THEN
+        LOG_SECURITY_EVENT("Failed login attempt", username)
+        RETURN error("Invalid credentials")
+    END IF
+    
+    // Verify password
+    password_hash = HASH_PASSWORD(password, user_record.salt)
+    
+    IF password_hash != user_record.password_hash THEN
+        user_record.failed_attempts = user_record.failed_attempts + 1
+        DATABASE.update(user_record)
+        
+        // Lock account after 5 failed attempts
+        IF user_record.failed_attempts >= 5 THEN
+            user_record.is_locked = TRUE
+            DATABASE.update(user_record)
+            RETURN error("Account locked due to multiple failed attempts")
+        END IF
+        
+        LOG_SECURITY_EVENT("Failed login attempt", username)
+        RETURN error("Invalid credentials")
+    END IF
+    
+    // Check if account is locked
+    IF user_record.is_locked THEN
+        RETURN error("Account is locked. Contact administrator.")
+    END IF
+    
+    // Reset failed attempts on successful login
+    user_record.failed_attempts = 0
+    user_record.last_login = CURRENT_TIMESTAMP()
+    DATABASE.update(user_record)
+    
+    // Generate session token
+    session_token = GENERATE_TOKEN(user_record.user_id, EXPIRY_TIME=3600)
+    
+    // Create session record
+    SESSION.create(session_token, user_record.user_id, EXPIRY_TIME=3600)
+    
+    LOG_SECURITY_EVENT("Successful login", username)
+    
+    RETURN success(session_token, user_record)
+END FUNCTION
