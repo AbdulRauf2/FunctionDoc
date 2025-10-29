@@ -411,10 +411,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Contact
 
-- **Author**: Your Name
-- **Email**: your.email@example.com
-- **GitHub**: [@yourusername](https://github.com/yourusername)
-- **LinkedIn**: [Your LinkedIn](https://linkedin.com/in/yourprofile)
+- **Author**: Abdul Rauf
+- **Email**: raufbagharib@gmail.com
+- **GitHub**: [@AbdulRauf2](]https://github.com/AbdulRauf2/)
+- **LinkedIn**: [Abdul Rauf Bagharib](https://www.linkedin.com/in/abdulrauf-bagharib/)
 
 ## 🌟 Star History
 
